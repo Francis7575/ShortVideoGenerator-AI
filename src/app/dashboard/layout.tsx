@@ -1,5 +1,6 @@
 import { ReactNode } from "react"
 import Header from "./_components/Header"
+import SideNav from "./_components/SideNav"
 
 type Props = {
   children: ReactNode
@@ -8,9 +9,14 @@ type Props = {
 const DashboardLayout = ({ children }: Props) => {
   return (
     <div>
+      <div className="hidden md:block h-screen bg-white fixed mt-[65px]">
+        <SideNav />
+      </div>
       <div>
         <Header />
-        {children}
+        <div className="md:ml-[261px]">
+          {children}
+        </div>
       </div>
     </div>
   )
