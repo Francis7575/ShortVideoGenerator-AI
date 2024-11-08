@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+'use client'
 
 export default function Home() {
   return (
     <div>
-      <Button>Subscribe</Button>
+      hello world
     </div>
   );
 }

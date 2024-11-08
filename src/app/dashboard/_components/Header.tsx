@@ -1,8 +1,17 @@
+'use client'
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { UserButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+
 
 const Header = () => {
+  const router = useRouter()
+
+  const handleNav = () => {
+    router.push('/dashboard')
+  }
+
   return (
     <div className="py-3 px-5 flex items-center justify-between shadow-md">
       <div className="flex gap-3 items-center">
@@ -10,7 +19,7 @@ const Header = () => {
         <h2 className="font-bold text-xl">AI Short Vid</h2>
       </div>
       <div className="flex gap-3 items-center">
-        <Button>Dashboard</Button>
+        <Button onClick={handleNav}>Dashboard</Button>
         <UserButton />
       </div>
     </div>

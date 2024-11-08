@@ -1,3 +1,4 @@
+'use client'
 import { ReactNode } from "react"
 import Header from "./_components/Header"
 import SideNav from "./_components/SideNav"
