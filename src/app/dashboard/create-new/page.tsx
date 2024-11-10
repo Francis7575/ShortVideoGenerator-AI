@@ -4,6 +4,7 @@ import SelectTopic from "./_components/SelectTopic"
 import SelectStyle from "./_components/SelectStyle"
 import SelectDuration from "./_components/SelectDuration"
 import { Button } from "@/components/ui/button"
+import CustomLoading from "./_components/CustomLoading"
 
 type formDataProps = {
   topic?: string
@@ -13,6 +14,8 @@ type formDataProps = {
 
 const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
+  const [loading, setLoading] = useState<boolean>(false)
+  const [videoScript, setVideoScript] = useState()
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     console.log(fieldName, fieldValue);
@@ -30,22 +33,29 @@ const CreateNew = () => {
   }
 
   const getVideoScript = async () => {
-    const prompt =  'Write a script to generate ' + formData.duration + ' video on topic : ' + formData.topic + ' along with AI image prompt in ' + formData.imageStyle + ' format for each scene and give me result in JSON format with imagePrompt and ContextText as field, No Plain text'
-    console.log(prompt);
-    
-    // try {
-    //   const response = await fetch('api/get-video-script', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //       // prompt: 
-    //     })
-    //   })
-    // } catch (e) {
+    const prompt = 'Write a script to generate ' + formData.duration + ' video on topic : ' + formData.topic + ' along with AI image prompt in ' + formData.imageStyle + ' format for each scene and give me result in JSON format with imagePrompt and ContextText as field, No Plain text'
+    try {
+      setLoading(true)
+      const response = await fetch('/api/get-video-script', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: prompt })
+      })
 
-    // }
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json()
+      console.log(data.result);
+      setVideoScript(data.result)
+    } catch (e) {
+      console.error('Failed to fetch video script:', e);
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -61,6 +71,7 @@ const CreateNew = () => {
           Create Short Video
         </Button>
       </div>
+      <CustomLoading loading={loading} />
     </div>
   )
 }
