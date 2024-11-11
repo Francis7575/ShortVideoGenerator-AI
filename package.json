@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.2.1",
+    "@google-cloud/text-to-speech": "^5.5.0",
     "@google/generative-ai": "^0.21.0",
     "@neondatabase/serverless": "^0.10.3",
     "@radix-ui/react-alert-dialog": "^1.1.2",
@@ -25,7 +26,8 @@
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/node": "^20",
