@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.36.1",
+    "firebase": "^11.0.1",
     "lucide-react": "^0.454.0",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",

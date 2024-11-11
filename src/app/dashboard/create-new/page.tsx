@@ -24,6 +24,7 @@ const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
   const [loading, setLoading] = useState<boolean>(false)
   const [videoScript, setVideoScript] = useState<VideoScriptItem[] | string>()
+  const [audioFileUrl, setAudioFileUrl] = useState()
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     console.log(fieldName, fieldValue);
@@ -84,7 +85,7 @@ const CreateNew = () => {
         body: JSON.stringify({ text: videoScriptData, id: id })
       })
       const data = await response.json()
-      console.log(data);
+      setAudioFileUrl(data.result)
     } catch (e) {
       console.error('Error generate audio file:', e)
     } finally {
