@@ -19,12 +19,14 @@ type VideoScriptItem = {
 };
 
 const scriptData = 'Early humans lived in caves for shelter and warmth, and used fire for cooking and light. The ancient Egyptians were known for their incredible pyramids, built as tombs for pharaohs. The Roman Empire was a vast empire known for its powerful armies, impressive infrastructure, and thrilling entertainment like gladiator contests and chariot races. Medieval knights were warriors who wore heavy armor and fought on horseback, often during tournaments or battles. Explorers sailed the seas, discovering new lands and expanding knowledge of the world. Galileo Galilei was a famous astronomer who challenged the prevailing belief that the Earth was the center of the universe. Technology has evolved rapidly throughout history, from the printing press to the internet.'
+const fileUrl = 'https://firebasestorage.googleapis.com/v0/b/fir-auth-a5374.appspot.com/o/ai-short-video-files%2F5263dd00-2f56-4651-a75c-fbb35323e8c3.mp3?alt=media&token=993da339-841a-47be-8212-506166c42788'
 
 const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
   const [loading, setLoading] = useState<boolean>(false)
   const [videoScript, setVideoScript] = useState<VideoScriptItem[] | string>()
   const [audioFileUrl, setAudioFileUrl] = useState()
+  const [captions, setCaptions] = useState()
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     console.log(fieldName, fieldValue);
@@ -38,7 +40,8 @@ const CreateNew = () => {
   const createClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     console.log("Button clicked, starting getVideoScript...");
-    GenerateAudioFile(scriptData)
+    // GenerateAudioFile(scriptData)
+    GenerateAudioCaption(fileUrl)
   }
 
   const GetVideoScript = async () => {
@@ -88,6 +91,26 @@ const CreateNew = () => {
       setAudioFileUrl(data.result)
     } catch (e) {
       console.error('Error generate audio file:', e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const GenerateAudioCaption = async (fileUrl: string) => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/generate-caption', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ audioFile: fileUrl })
+      })
+      const data = await response.json()
+      console.log(data.result);
+      setCaptions(data.result)
+    } catch (e) {
+      console.error('Error generate audio caption:', e)
     } finally {
       setLoading(false)
     }
