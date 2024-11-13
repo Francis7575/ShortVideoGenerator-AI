@@ -4,6 +4,7 @@ import { Users } from "@/config/schema"
 import { useUser } from "@clerk/nextjs"
 import { eq } from "drizzle-orm"
 import { ReactNode, useEffect } from "react"
+import { VideoDataProvider } from "@/app/_context/VideoDataContext"
 
 type ProviderProps = {
   children: ReactNode
@@ -33,7 +34,9 @@ const Provider = ({ children }: ProviderProps) => {
   }, [user])
 
   return (
-    <div>{children}</div>
+    <VideoDataProvider>
+      <div>{children}</div>
+    </VideoDataProvider>
   )
 }
 

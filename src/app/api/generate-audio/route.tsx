@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const downloadUrl = await getDownloadURL(storageRef)
     console.log(downloadUrl);
 
-    return NextResponse.json({ Result: downloadUrl })
+    return NextResponse.json({ result: downloadUrl })
   } catch (error) {
     console.error('Error during text-to-speech synthesis:', error);
     return NextResponse.json({ error: 'Failed to synthesize speech' }, { status: 500 });
