@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
-import { writeFile } from "node:fs/promises";
+import { writeFile, readFile } from "node:fs/promises";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { storage } from "@/config/firebase";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,17 +27,35 @@ export async function POST(req: NextRequest) {
     // Ensure output is an array or object with valid image data
     for (const [index, item] of Object.entries(output)) {
       await writeFile(`output_${index}.png`, item);
-      // Instead of writing the file, just log the URL to the console
-      const imageFile = `/output_${index}.png`;
-      imageFiles.push(imageFile);
+      const localFilePath = `output_${index}.png`;
 
-      console.log(`Image URL: ${imageFile}`);
+      // Convert the saved file to base64
+      const base64Image = await convertImageFileToBase64(localFilePath);
+
+      // Upload the base64 image to Firebase
+      const fileName = `${Date.now()}_output_${index}.png`;
+      const storageRef = ref(storage, `ai-short-video-files/${fileName}`);
+      await uploadString(storageRef, base64Image, "data_url");
+
+      // Get the Firebase download URL and add to the array
+      const downloadUrl = await getDownloadURL(storageRef);
+      imageFiles.push(downloadUrl);
+      console.log(`Image uploaded to Firebase: ${downloadUrl}`);
     }
-
 
     return NextResponse.json({ 'result': imageFiles })
   } catch (e) {
     console.error("Error in image generation:", e);
     return NextResponse.json({ 'error': e })
+  }
+}
+
+async function convertImageFileToBase64(filePath: string) {
+  try {
+    const fileData = await readFile(filePath);
+    return `data:image/png;base64,${fileData.toString("base64")}`;
+  } catch (error) {
+    console.error("Error reading or converting file to base64:", error);
+    throw error;
   }
 }
