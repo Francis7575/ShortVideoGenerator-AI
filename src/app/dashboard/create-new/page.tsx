@@ -7,17 +7,11 @@ import { Button } from "@/components/ui/button"
 import CustomLoading from "./_components/CustomLoading"
 import { v4 as uuidv4 } from 'uuid';
 import { useVideoDataContext } from "@/app/_context/VideoDataContext"
-
-type formDataProps = {
-  topic?: string
-  imageStyle?: string
-  duration?: string
-}
-
-type VideoScriptItem = {
-  contextText: string;
-  imagePrompt?: string;
-};
+import { db } from "@/config/db"
+import { VideoData } from "@/config/schema"
+import { videoParams } from "@/types/types"
+import { useUser } from "@clerk/nextjs"
+import { formDataProps, VideoScriptItem } from "@/types/types"
 
 const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
@@ -26,7 +20,9 @@ const CreateNew = () => {
   const [audioFileUrl, setAudioFileUrl] = useState<string | undefined>()
   const [captions, setCaptions] = useState<string | undefined>()
   const [imageList, setImageList] = useState<string[]>([])
+  const [submitted, setSubmitted] = useState(false);
   const { videoData, setVideoData } = useVideoDataContext()
+  const { user } = useUser();
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     console.log(fieldName, fieldValue);
@@ -47,9 +43,9 @@ const CreateNew = () => {
   }
 
   const GetVideoScript = async () => {
+    setLoading(true)
     const prompt = 'Write a script to generate ' + formData.duration + ' video on topic : ' + formData.topic + ' along with AI image prompt in ' + formData.imageStyle + ' format for each scene and give me result in JSON format with imagePrompt and ContextText as field, No Plain text'
     try {
-      setLoading(true)
       const response = await fetch('/api/get-video-script', {
         method: 'POST',
         headers: {
@@ -78,13 +74,13 @@ const CreateNew = () => {
 
   // Generate audio file and save to firebase storage
   const GenerateAudioFile = async (videoScriptData: VideoScriptItem[] | undefined) => {
+    setLoading(true)
     let script = '';
     const id = uuidv4();
     videoScriptData?.forEach((item: VideoScriptItem) => {
       script = script + item.contextText + ' '
     })
     // console.log(script);
-    setLoading(true)
     try {
       const response = await fetch('/api/generate-audio', {
         method: 'POST',
@@ -102,6 +98,8 @@ const CreateNew = () => {
       data.result && await GenerateAudioCaption(data.result, videoScriptData)
     } catch (e) {
       console.error('Error generate audio file:', e)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -162,8 +160,36 @@ const CreateNew = () => {
   };
 
   useEffect(() => {
+    if (videoData && Object.keys(videoData).length === 4 && !submitted) {
+      SaveVideoData(videoData);
+    } 
+  }, [videoData, submitted]);
+
+  const SaveVideoData = async (videoData: videoParams | videoParams[]) => { 
+    setLoading(true)
     console.log(videoData);
-  }, [videoData])
+
+    // Ensure videoData is an array
+    const videos = Array.isArray(videoData) ? [videoData[0]] : [videoData];
+    console.log(videos[0]);
+
+    try {
+      const result = await db.insert(VideoData).values({
+        script: videos[0]?.videoScript || [],
+        audioFileUrl: videos[0]?.audioFileUrl || '',
+        captions: videos[0]?.captions || [],
+        imageList: videos[0]?.imageList || [],
+        createdBy: user?.primaryEmailAddress?.emailAddress || '',
+      }).returning({ id: VideoData?.id })
+
+      console.log('Inserted result:', result);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error inserting videos:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="md:px-20">

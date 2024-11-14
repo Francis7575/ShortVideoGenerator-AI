@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
-import { writeFile, readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { storage } from "@/config/firebase";
 
