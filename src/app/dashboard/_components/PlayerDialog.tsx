@@ -49,37 +49,32 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
 
   return (
     <Dialog open={openDialog}>
-      <DialogContent className="bg-white flex flex-col items-center" asChild>
+      <DialogContent className="bg-white flex flex-col items-center">
         <DialogHeader >
           <DialogTitle className="text-3xl font-bold my-5">Your video is ready</DialogTitle>
-          <DialogDescription asChild>
-            <div>
-              <Player
-                component={RemotionVideo}
-                durationInFrames={durationInFrame}
-                compositionWidth={300}
-                compositionHeight={450}
-                controls={true}
-                fps={30}
-                inputProps={{
-                  ...videoData,
-                  setDurationInFrame: (frameValue: number) => setDurationInFrame(frameValue)
-                }}
-              />
-              <DialogDescription asChild>
-                <div className='flex gap-10 mt-10'>
-                  <Button variant="ghost">
-                    Close
-                  </Button>
-                  <Button>Export</Button>
-
-                </div>
-              </DialogDescription>
+          <DialogDescription>
+            <Player
+              component={RemotionVideo}
+              durationInFrames={durationInFrame}
+              compositionWidth={300}
+              compositionHeight={450}
+              controls={true}
+              fps={30}
+              inputProps={{
+                ...videoData,
+                setDurationInFrame: (frameValue: number) => setDurationInFrame(frameValue)
+              }}
+            />
+            <div className='flex gap-10 mt-10'>
+              <Button variant="ghost">
+                Close
+              </Button>
+              <Button>Export</Button>
             </div>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
-    </Dialog >
+    </Dialog>
 
   )
 }
