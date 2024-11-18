@@ -20,7 +20,7 @@ const SelectTopic = ({ onUserSelect }: SelectProps) => {
       <p className='text-gray-500'>
         What is the topic of your video?
       </p>
-      <Select onValueChange={(value) => {
+      <Select  onValueChange={(value) => {
         setSelectedOption(value)
         value != 'Custom Prompt' && onUserSelect('topic', value)
       }}>

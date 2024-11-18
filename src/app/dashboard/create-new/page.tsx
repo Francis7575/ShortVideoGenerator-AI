@@ -12,6 +12,7 @@ import { VideoData } from "@/config/schema"
 import { videoParams } from "@/types/types"
 import { useUser } from "@clerk/nextjs"
 import { formDataProps, VideoScriptItem } from "@/types/types"
+import PlayerDialog from "../_components/PlayerDialog"
 
 const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
@@ -19,6 +20,8 @@ const CreateNew = () => {
   const [videoScript, setVideoScript] = useState<VideoScriptItem[] | undefined>()
   const [audioFileUrl, setAudioFileUrl] = useState<string | undefined>()
   const [captions, setCaptions] = useState<string | undefined>()
+  const [playVideo, setPlayVideo] = useState<boolean>(false);
+  const [videoId, setVideoId] = useState<number>(126);
   const [imageList, setImageList] = useState<string[]>([])
   const [submitted, setSubmitted] = useState(false);
   const { videoData, setVideoData } = useVideoDataContext()
@@ -162,10 +165,10 @@ const CreateNew = () => {
   useEffect(() => {
     if (videoData && Object.keys(videoData).length === 4 && !submitted) {
       SaveVideoData(videoData);
-    } 
+    }
   }, [videoData, submitted]);
 
-  const SaveVideoData = async (videoData: videoParams | videoParams[]) => { 
+  const SaveVideoData = async (videoData: videoParams | videoParams[]) => {
     setLoading(true)
     console.log(videoData);
 
@@ -175,7 +178,7 @@ const CreateNew = () => {
 
     try {
       const result = await db.insert(VideoData).values({
-        script: videos[0]?.videoScript || [],
+        script: videos[0]?.script || [],
         audioFileUrl: videos[0]?.audioFileUrl || '',
         captions: videos[0]?.captions || [],
         imageList: videos[0]?.imageList || [],
@@ -184,6 +187,8 @@ const CreateNew = () => {
 
       console.log('Inserted result:', result);
       setSubmitted(true);
+      setVideoId(result[0].id);
+      setPlayVideo(true)
     } catch (error) {
       console.error('Error inserting videos:', error);
     } finally {
@@ -205,6 +210,7 @@ const CreateNew = () => {
         </Button>
       </div>
       <CustomLoading loading={loading} />
+      <PlayerDialog playVideo={playVideo} videoId={videoId} />
     </div>
   )
 }

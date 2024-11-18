@@ -13,7 +13,7 @@ export type VideoScriptItem = {
   imagePrompt?: string;
 };
 
-type captionsItem = {
+export type captionsItem = {
   text: string
   start: number
   end: number
@@ -22,8 +22,25 @@ type captionsItem = {
 }
 
 export type videoParams = {
-  audioFileUrl: string
+  audioFileUrl?: string
+  captions?: captionsItem[]
+  imageList?: string[]
+  script?: VideoScriptItem[]
+}
+
+export type RemotionVideoProps = {
+  audioFileUrl?: string
+  captions?: captionsItem[]
+  imageList?: string[]
+  script?: VideoScriptItem[]
+  setDurationInFrame: (lastCaption: number) => void
+}
+
+export type videoDataSchema = {
+  id: number
+  script: VideoScriptItem[]
+  audioFileUrl: string 
   captions: captionsItem[]
   imageList: string[]
-  videoScript: VideoScriptItem[]
+  createdBy: string 
 }
