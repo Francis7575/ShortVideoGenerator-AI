@@ -72,7 +72,7 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
                   setDurationInFrame: (frameValue: number) => setDurationInFrame(frameValue)
                 }}
               />
-              <DialogFooter className='flex gap-10 mt-10'>
+              <DialogFooter className='flex gap-10 mt-10 justify-center'>
                 <Button variant="ghost">
                   Close
                 </Button>

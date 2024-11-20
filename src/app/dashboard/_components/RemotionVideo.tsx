@@ -1,7 +1,7 @@
 'use client'
 import { RemotionVideoProps } from "@/types/types"
 import { useEffect } from "react"
-import { AbsoluteFill, Img, Sequence, useVideoConfig } from "remotion"
+import { AbsoluteFill, Audio, Img, Sequence, useVideoConfig } from "remotion"
 
 
 const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationInFrame }: RemotionVideoProps) => {
@@ -16,10 +16,10 @@ const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationI
     }
   }, [captions, fps, setDurationInFrame]) // Only run when captions or fps change
 
-  const durationFrames = (captions && captions.length > 0) 
+  const durationFrames = (captions && captions.length > 0)
     ? (captions[captions.length - 1].end / 1000) * fps
     : 0;
-  
+
   return (
     <AbsoluteFill className='bg-black'>
       {imageList?.map((item, idx) => {
@@ -38,7 +38,7 @@ const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationI
           </Sequence>
         )
       })}
-
+      <Audio src={audioFileUrl} />
     </AbsoluteFill>
 
   )
