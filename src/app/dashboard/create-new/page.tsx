@@ -64,7 +64,7 @@ const CreateNew = () => {
       const data = await response.json()
       setVideoData(prev => ({
         ...prev,
-        'videoScript': data.result
+        'script': data.result
       }))
       setVideoScript(data.result)
       await GenerateAudioFile(data.result)

@@ -5,6 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog"
 import { Player } from '@remotion/player';
 import RemotionVideo from '@/app/dashboard/_components/RemotionVideo';
@@ -26,9 +27,11 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
   const [durationInFrame, setDurationInFrame] = useState<number>(100)
 
   useEffect(() => {
-    videoId && setOpenDialog(!openDialog)
-    videoId && GetVideoData();
-  }, [playVideo])
+    if (playVideo && videoId) {
+      setOpenDialog(true);
+      GetVideoData();
+    }
+  }, [playVideo, videoId]);
 
   const GetVideoData = async () => {
     const result = await db.select().from(VideoData).where(eq(VideoData.id, videoId));
@@ -47,30 +50,36 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
     }
   };
 
+  // Render dialog only on the client
+  if (!openDialog || !videoData) return null;
+
   return (
     <Dialog open={openDialog}>
       <DialogContent className="bg-white flex flex-col items-center">
         <DialogHeader >
           <DialogTitle className="text-3xl font-bold my-5">Your video is ready</DialogTitle>
-          <DialogDescription>
-            <Player
-              component={RemotionVideo}
-              durationInFrames={durationInFrame}
-              compositionWidth={300}
-              compositionHeight={450}
-              controls={true}
-              fps={30}
-              inputProps={{
-                ...videoData,
-                setDurationInFrame: (frameValue: number) => setDurationInFrame(frameValue)
-              }}
-            />
-            <div className='flex gap-10 mt-10'>
-              <Button variant="ghost">
-                Close
-              </Button>
-              <Button>Export</Button>
+          <DialogDescription asChild>
+            <div>
+              <Player
+                component={RemotionVideo}
+                durationInFrames={Number(durationInFrame.toFixed(0))}
+                compositionWidth={300}
+                compositionHeight={450}
+                controls={true}
+                fps={30}
+                inputProps={{
+                  ...videoData,
+                  setDurationInFrame: (frameValue: number) => setDurationInFrame(frameValue)
+                }}
+              />
+              <DialogFooter className='flex gap-10 mt-10'>
+                <Button variant="ghost">
+                  Close
+                </Button>
+                <Button>Export</Button>
+              </DialogFooter>
             </div>
+
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

@@ -1,4 +1,6 @@
+'use client'
 import { RemotionVideoProps } from "@/types/types"
+import { useEffect } from "react"
 import { AbsoluteFill, Img, Sequence, useVideoConfig } from "remotion"
 
 
@@ -6,32 +8,36 @@ const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationI
 
   const { fps } = useVideoConfig()
 
-  const getDurationFrames = (): number => {
+  useEffect(() => {
     if (captions && captions.length > 0) {
       const lastCaption = captions[captions.length - 1]
-      const frameValue = (lastCaption.end / 1000) * fps; // Calculate and return duration in frames
-      setDurationInFrame(frameValue); // Pass lastCaption to the setter prop
-      return frameValue
+      const frameValue = (lastCaption.end / 1000) * fps
+      setDurationInFrame(frameValue) // Update the duration in the parent component
     }
-    return 0; // Return 0 if no captions are available
-  };
+  }, [captions, fps, setDurationInFrame]) // Only run when captions or fps change
 
-  const durationFrames = getDurationFrames() / (imageList?.length || 1);
-
+  const durationFrames = (captions && captions.length > 0) 
+    ? (captions[captions.length - 1].end / 1000) * fps
+    : 0;
+  
   return (
     <AbsoluteFill className='bg-black'>
-      {imageList?.map((item, idx) => (
-        <Sequence key={idx} from={idx * durationFrames} durationInFrames={durationFrames}>
-          <Img
-            src={item}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover'
-            }}
-          />
-        </Sequence>
-      ))}
+      {imageList?.map((item, idx) => {
+        const startFrame = (idx * durationFrames) / imageList?.length;
+
+        return (
+          <Sequence key={idx} from={startFrame} durationInFrames={durationFrames}>
+            <Img
+              src={item}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+            />
+          </Sequence>
+        )
+      })}
 
     </AbsoluteFill>
 

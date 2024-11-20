@@ -1,13 +1,14 @@
 import React from 'react';
 import { Composition } from 'remotion';
 import RemotionVideo from '@/app/dashboard/_components/RemotionVideo';
-import { videoParams } from '@/types/types';
+import { RemotionVideoProps } from '@/types/types';
 
-const defaultProps: videoParams = {
+const defaultProps: RemotionVideoProps = {
   script: [], 
   imageList: [],
   audioFileUrl: '',
   captions: [],
+  setDurationInFrame: () => {}
 };
 
 export const RemotionRoot: React.FC = () => {
