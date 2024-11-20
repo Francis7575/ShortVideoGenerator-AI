@@ -1,7 +1,7 @@
 'use client'
 import { RemotionVideoProps } from "@/types/types"
 import { useEffect } from "react"
-import { AbsoluteFill, Audio, Img, Sequence, useCurrentFrame, useVideoConfig } from "remotion"
+import { AbsoluteFill, Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from "remotion"
 
 
 const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationInFrame }: RemotionVideoProps) => {
@@ -30,17 +30,25 @@ const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationI
   return (
     <AbsoluteFill className='bg-black'>
       {imageList?.map((item, idx) => {
-        const startFrame = (idx * durationFrames) / imageList?.length;
+        const startTime = (idx * durationFrames) / imageList?.length;
 
+        const scale =(idx: number)=> interpolate(
+          frame,
+          [startTime, startTime + durationFrames / 2, startTime + durationFrames], // Zoom in and then zoom out
+          idx%2==0 ?[1, 1.3, 1]:[1.8,1,1.8], // Scale from 1 (original) to 1.3 (zoomed-in) and back to 1
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+        );
+        
         return (
-          <Sequence key={idx} from={startFrame} durationInFrames={durationFrames}>
+          <Sequence key={idx} from={startTime} durationInFrames={durationFrames}>
             <AbsoluteFill>
               <Img
                 src={item}
                 style={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover'
+                  objectFit: 'cover',
+                  transform:`scale(${scale(idx)})`
                 }}
               />
               <AbsoluteFill style={{
