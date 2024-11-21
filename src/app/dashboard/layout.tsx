@@ -18,7 +18,7 @@ const DashboardLayout = ({ children }: Props) => {
       </div>
       <div>
         <Header />
-        <div className="md:ml-[261px] p-10">
+        <div className="md:ml-[261px] p-6 md:p-10">
           {children}
         </div>
       </div>

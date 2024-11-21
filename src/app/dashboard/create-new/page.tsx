@@ -21,11 +21,12 @@ const CreateNew = () => {
   const [audioFileUrl, setAudioFileUrl] = useState<string | undefined>()
   const [captions, setCaptions] = useState<string | undefined>()
   const [playVideo, setPlayVideo] = useState<boolean>(false);
-  const [videoId, setVideoId] = useState<number>(126);
+  const [videoId, setVideoId] = useState<number>(0);
   const [imageList, setImageList] = useState<string[]>([])
   const [submitted, setSubmitted] = useState(false);
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
+  
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     console.log(fieldName, fieldValue);

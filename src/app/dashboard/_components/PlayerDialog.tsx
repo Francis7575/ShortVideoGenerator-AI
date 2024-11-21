@@ -15,9 +15,10 @@ import { db } from "@/config/db";
 import { VideoData } from "@/config/schema";
 import { eq } from "drizzle-orm";
 import { captionsItem, videoDataSchema, VideoScriptItem } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 type PlayerDialogProps = {
-  playVideo: boolean
+  playVideo: number | boolean
   videoId: number
 }
 
@@ -25,10 +26,11 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [videoData, setVideoData] = useState<videoDataSchema | null>(null);
   const [durationInFrame, setDurationInFrame] = useState<number>(100)
+  const router = useRouter()
 
   useEffect(() => {
     if (playVideo && videoId) {
-      setOpenDialog(true);
+      setOpenDialog(!openDialog);
       GetVideoData();
     }
   }, [playVideo, videoId]);
@@ -56,15 +58,15 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
   return (
     <Dialog open={openDialog}>
       <DialogContent className="bg-white flex flex-col items-center">
-        <DialogHeader >
-          <DialogTitle className="text-3xl font-bold my-5">Your video is ready</DialogTitle>
+        <DialogHeader>
+          <DialogTitle className="text-3xl font-bold my-5 text-center">Your video is ready</DialogTitle>
           <DialogDescription asChild>
             <div>
               <Player
                 component={RemotionVideo}
                 durationInFrames={Number(durationInFrame.toFixed(0))}
                 compositionWidth={300}
-                compositionHeight={450}
+                compositionHeight={375}
                 controls={true}
                 fps={30}
                 inputProps={{
@@ -73,7 +75,7 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
                 }}
               />
               <DialogFooter className='flex gap-10 mt-10 justify-center'>
-                <Button variant="ghost">
+                <Button variant="ghost" onClick={() => {router.replace('/dashboard'); setOpenDialog(false)}}>
                   Close
                 </Button>
                 <Button>Export</Button>
