@@ -12,6 +12,7 @@ import VideoList from "./_components/VideoList"
 
 const Dashboard = () => {
   const [videoList, setVideoList] = useState<videoDataSchema[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const { user } = useUser()
   const router = useRouter()
 
@@ -22,23 +23,30 @@ const Dashboard = () => {
   }, [user]);
 
   const GetVideoList = async () => {
-    const result = await db.select().from(VideoData)
-      .where(user?.primaryEmailAddress?.emailAddress
-        ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
-        : undefined)
+    setIsLoading(true)
+    try {
+      const result = await db.select().from(VideoData)
+        .where(user?.primaryEmailAddress?.emailAddress
+          ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
+          : undefined)
 
-    console.log(result);
-    // Transform data to match the `videoDataSchema` type
-    const formattedResult: videoDataSchema[] = result.map((item) => ({
-      id: item.id,
-      script: Array.isArray(item.script) ? item.script : [], 
-      audioFileUrl: item.audioFileUrl || "", 
-      captions: Array.isArray(item.captions) ? item.captions : [], 
-      imageList: item.imageList || [], 
-      createdBy: item.createdBy || "", 
-    }));
+      console.log(result);
+      // Transform data to match the `videoDataSchema` type
+      const formattedResult: videoDataSchema[] = result.map((item) => ({
+        id: item.id,
+        script: Array.isArray(item.script) ? item.script : [],
+        audioFileUrl: item.audioFileUrl || "",
+        captions: Array.isArray(item.captions) ? item.captions : [],
+        imageList: item.imageList || [],
+        createdBy: item.createdBy || "",
+      }));
 
-    setVideoList(formattedResult);
+      setVideoList(formattedResult);
+    } catch (error) {
+      console.error("Error fetching video list:", error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -50,11 +58,13 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      {videoList?.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <VideoList videoList={videoList} />
-      )}
+      {isLoading &&
+        <p className="flex justify-center font-medium items-center min-h-screen text-2xl">
+          Loading...
+        </p>
+      }
+      {!isLoading && videoList.length === 0 && <EmptyState />}
+      {!isLoading && videoList.length > 0 && <VideoList videoList={videoList} />}
     </div>
   )
 }
