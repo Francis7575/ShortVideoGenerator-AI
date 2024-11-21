@@ -2,14 +2,14 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { videoParams } from '@/types/types'
 
 type VideoDataContextType = {
-  videoData: videoParams | videoParams[]
-  setVideoData: React.Dispatch<React.SetStateAction<videoParams[]>>;
+  videoData: videoParams | null
+  setVideoData: React.Dispatch<React.SetStateAction<videoParams | null>>;
 }
 
 const VideoDataContext = createContext<VideoDataContextType | undefined>(undefined);
 
 export const VideoDataProvider = ({ children }: { children: ReactNode }) => {
-  const [videoData, setVideoData] = useState<videoParams[]>([]);
+  const [videoData, setVideoData] = useState<videoParams | null>(null);
 
   const value = {
     videoData,

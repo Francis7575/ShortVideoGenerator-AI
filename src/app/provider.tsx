@@ -4,7 +4,8 @@ import { Users } from "@/config/schema"
 import { useUser } from "@clerk/nextjs"
 import { eq } from "drizzle-orm"
 import { ReactNode, useEffect } from "react"
-import { VideoDataProvider } from "@/app/_context/VideoDataContext"
+import { VideoDataProvider } from "./_context/VideoDataContext"
+import { UserDataProvider } from "./_context/UserDetailContext"
 
 type ProviderProps = {
   children: ReactNode
@@ -19,7 +20,6 @@ const Provider = ({ children }: ProviderProps) => {
           .select()
           .from(Users)
           .where(eq(Users.email, user.primaryEmailAddress.emailAddress))
-        console.log(result)
 
         if (!result) {
           await db.insert(Users).values({
@@ -34,9 +34,11 @@ const Provider = ({ children }: ProviderProps) => {
   }, [user])
 
   return (
-    <VideoDataProvider>
-      <div>{children}</div>
-    </VideoDataProvider>
+    <UserDataProvider>
+      <VideoDataProvider>
+        <div>{children}</div>
+      </VideoDataProvider>
+    </UserDataProvider>
   )
 }
 

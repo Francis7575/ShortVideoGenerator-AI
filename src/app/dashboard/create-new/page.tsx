@@ -8,11 +8,14 @@ import CustomLoading from "./_components/CustomLoading"
 import { v4 as uuidv4 } from 'uuid';
 import { useVideoDataContext } from "@/app/_context/VideoDataContext"
 import { db } from "@/config/db"
-import { VideoData } from "@/config/schema"
+import { Users, VideoData } from "@/config/schema"
 import { videoParams } from "@/types/types"
 import { useUser } from "@clerk/nextjs"
 import { formDataProps, VideoScriptItem } from "@/types/types"
 import PlayerDialog from "../_components/PlayerDialog"
+import { useUserDetailContext } from "@/app/_context/UserDetailContext"
+import { toast } from "sonner"
+import { eq } from "drizzle-orm"
 
 const CreateNew = () => {
   const [formData, setFormData] = useState<formDataProps>({})
@@ -24,12 +27,13 @@ const CreateNew = () => {
   const [videoId, setVideoId] = useState<number>(0);
   const [imageList, setImageList] = useState<string[]>([])
   const [submitted, setSubmitted] = useState(false);
+  const { userDetail, setUserDetail } = useUserDetailContext()
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
-  
+
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
-    console.log(fieldName, fieldValue);
+    // console.log(fieldName, fieldValue);
 
     setFormData(prev => ({
       ...prev,
@@ -40,6 +44,10 @@ const CreateNew = () => {
   const createClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     console.log("Button clicked, starting getVideoScript...");
+    if ((userDetail?.credits ?? 0) < 10) {
+      toast("You don't have enough Credits")
+      return;
+    }
     GetVideoScript()
     // GenerateAudioFile(scriptData)
     // GenerateAudioCaption(fileUrl)
@@ -188,6 +196,7 @@ const CreateNew = () => {
 
       console.log('Inserted result:', result);
       setSubmitted(true);
+      await UpdateUserCredits()
       setVideoId(result[0].id);
       setPlayVideo(true)
     } catch (error) {
@@ -195,6 +204,21 @@ const CreateNew = () => {
     } finally {
       setLoading(false);
     }
+  }
+
+  const UpdateUserCredits = async () => {
+    if (user?.primaryEmailAddress?.emailAddress) {
+      const result = await db.update(Users).set({
+        credits: (userDetail?.credits ?? 0) - 10
+      }).where(eq(Users?.email, user.primaryEmailAddress.emailAddress))
+      console.log(result);
+    }
+    setUserDetail(prev => ({
+      ...prev,
+      "credits": (userDetail?.credits ?? 0) - 10
+    }))
+
+    setVideoData(null)
   }
 
   return (

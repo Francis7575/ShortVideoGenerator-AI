@@ -1,15 +1,38 @@
 'use client'
-import { ReactNode, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import Header from "./_components/Header"
 import SideNav from "./_components/SideNav"
-import { useVideoDataContext } from "../_context/VideoDataContext"
+import { useUserDetailContext } from "../_context/UserDetailContext"
+import { useUser } from "@clerk/nextjs"
+import { Users } from "@/config/schema"
+import { eq } from "drizzle-orm"
+import { db } from "@/config/db"
+import { userDataSchema } from "@/types/types"
 
 type Props = {
   children: ReactNode
 }
 
 const DashboardLayout = ({ children }: Props) => {
-  const { videoData, setVideoData } = useVideoDataContext()
+  const { userDetail, setUserDetail } = useUserDetailContext()
+  const { user } = useUser()
+
+  useEffect(() => {
+    if (user) {
+      GetUserDetail()
+    }
+  }, [user]) // Only run when user is available
+
+  const GetUserDetail = async () => {
+    let result: userDataSchema[] = []
+    if (user?.primaryEmailAddress?.emailAddress) {
+      result = await db.select().from(Users)
+        .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress))
+    }
+    if (result.length > 0) {
+      setUserDetail(result[0])
+    }
+  }
 
   return (
     <div>
@@ -18,7 +41,7 @@ const DashboardLayout = ({ children }: Props) => {
       </div>
       <div>
         <Header />
-        <div className="md:ml-[261px] p-6 md:p-10">
+        <div className="md:ml-[261px] pt-[5.2rem] pb-6 md:pb-10 px-6 md:px-10">
           {children}
         </div>
       </div>

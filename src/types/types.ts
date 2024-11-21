@@ -44,3 +44,12 @@ export type videoDataSchema = {
   imageList: string[]
   createdBy: string 
 }
+
+export type userDataSchema = {
+  id?: number
+  name?: string 
+  email?: string
+  imageUrl?: string | null
+  subscription?: boolean| null
+  credits?: number | null
+}

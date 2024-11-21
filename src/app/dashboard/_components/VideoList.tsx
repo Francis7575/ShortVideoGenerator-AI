@@ -24,7 +24,7 @@ const VideoList = ({ videoList }: VideoListProps) => {
           onClick={() => handleClick(video?.id)}>
           <Thumbnail
             component={RemotionVideo}
-            compositionWidth={200}
+            compositionWidth={210}
             compositionHeight={300}
             frameToDisplay={30}
             durationInFrames={120}
