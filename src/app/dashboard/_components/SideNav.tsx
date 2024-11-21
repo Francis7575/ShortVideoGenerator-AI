@@ -1,5 +1,5 @@
 'use client'
-import { CircleUser, FileVideo, PanelsTopLeft, ShieldPlus } from 'lucide-react'
+import { FileVideo, PanelsTopLeft } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -10,8 +10,7 @@ const SideNav = () => {
   const MenuOptions = [
     { id: 1, name: 'Dashboard', path: '/dashboard', icon: PanelsTopLeft },
     { id: 2, name: 'Create New', path: '/dashboard/create-new', icon: FileVideo },
-    { id: 3, name: 'Upgrade', path: '/upgrade', icon: ShieldPlus },
-    { id: 4, name: 'Account', path: '/account', icon: CircleUser }
+    { id: 3, name: 'Buy Credits', path: '/dashboard/buy-credits', icon: '/credits.png' },
   ]
 
 
@@ -22,7 +21,13 @@ const SideNav = () => {
           <Link key={item.id} href={item.path}
             className={`flex items-center gap-3 p-3 hover:bg-primary cursor-pointer hover:text-white
             rounded-md ${path === item.path && 'bg-primary text-white'}`}>
-            <span><item.icon /></span>
+            <span>
+              {typeof item.icon === 'string' ? (
+                <img src={item.icon} alt={item.name} className="w-6 h-6" /> 
+              ) : (
+                <item.icon className="w-6 h-6" /> 
+              )}
+            </span>
             <h2>{item.name}</h2>
           </Link>
         ))}
