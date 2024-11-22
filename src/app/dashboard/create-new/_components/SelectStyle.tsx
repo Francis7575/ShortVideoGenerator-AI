@@ -24,8 +24,8 @@ const SelectStyle = ({onUserSelect}: SelectProps) => {
         {styleOptions.map((item, idx) => (
           <div key={idx} className={`relative hover:scale-105 transition-all cursor-pointer 
             ${selectedOption == item.name && 'border-4 border-primary rounded-xl'}`}>
-            <Image src={item.image} height={150} width={150} alt=""
-              className="h-48 rounded-lg w-[800px] object-cover"
+            <Image src={item.image} height={150} width={350} alt=""
+              className="h-48 rounded-lg object-cover"
               onClick={() => {
                 setSelectedOption(item.name)
                 onUserSelect('imageStyle', item.name)

@@ -222,9 +222,9 @@ const CreateNew = () => {
   }
 
   return (
-    <div className="md:px-20">
+    <div className="lg:px-10">
       <h2 className="font-bold text-4xl text-primary text-center">Create New</h2>
-      <div className="mt-10 shadow-md p-10">
+      <div className="mt-10 shadow-md p-10 lg:px-6">
         <SelectTopic onUserSelect={handleInputChange} />
         <SelectStyle onUserSelect={handleInputChange} />
         <SelectDuration onUserSelect={handleInputChange} />

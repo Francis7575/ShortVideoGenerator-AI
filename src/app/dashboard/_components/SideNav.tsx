@@ -3,16 +3,14 @@ import { FileVideo, PanelsTopLeft } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+export const MenuOptions = [
+  { id: 1, name: 'Dashboard', path: '/dashboard', icon: PanelsTopLeft },
+  { id: 2, name: 'Create New', path: '/dashboard/create-new', icon: FileVideo },
+  { id: 3, name: 'Buy Credits', path: '/dashboard/buy-credits', icon: '/credits.png' },
+]
 
 const SideNav = () => {
   const path = usePathname()
-
-  const MenuOptions = [
-    { id: 1, name: 'Dashboard', path: '/dashboard', icon: PanelsTopLeft },
-    { id: 2, name: 'Create New', path: '/dashboard/create-new', icon: FileVideo },
-    { id: 3, name: 'Buy Credits', path: '/dashboard/buy-credits', icon: '/credits.png' },
-  ]
-
 
   return (
     <div className="w-64 h-screen shadow-md p-5">
