@@ -11,7 +11,7 @@ const EmptyState = () => {
 
   return (
     <div className="p-5 py-24 flex items-center flex-col mt-10 border-2 border-dashed">
-      <h2>You don't have any short video created</h2>
+      <h2>You don&apos;t have any short video created</h2>
       <Button onClick={handleNavigation}>
         Create New Short Video
       </Button>
