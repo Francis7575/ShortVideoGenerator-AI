@@ -10,7 +10,6 @@ const client = new textToSpeech.TextToSpeechClient({
 export async function POST(req: NextRequest) {
   try {
     const { text, id } = await req.json();
-    const storageRef = ref(storage, 'ai-short-video-files/'+id+'.mp3')
     const request: protos.google.cloud.texttospeech.v1.ISynthesizeSpeechRequest = {
       input: { text },
       voice: {
@@ -23,12 +22,20 @@ export async function POST(req: NextRequest) {
     const [response] = await client.synthesizeSpeech(request);
 
     if (response.audioContent) {
-      const audioBuffer = Buffer.from(response.audioContent)
-      await uploadBytes(storageRef, audioBuffer, {contentType: 'audio/mp3'})
+      const storageRef = ref(storage, 'ai-short-video-files/' + id + '.mp3')
+      await uploadBytes(storageRef, Buffer.from(response.audioContent),
+        {
+          contentType: 'audio/mp3',
+        }).then(() => {
+          console.log("File uploaded successfully");
+        }).catch((err) => {
+          console.error("Error uploading file:", err);
+        });
+      const downloadUrl = await getDownloadURL(storageRef)
+      return NextResponse.json({ result: downloadUrl })
+    } else {
+      throw new Error("Failed to generate audio content");
     }
-    const downloadUrl = await getDownloadURL(storageRef)
-
-    return NextResponse.json({ result: downloadUrl })
   } catch (error) {
     console.error('Error during text-to-speech synthesis:', error);
     return NextResponse.json({ error: 'Failed to synthesize speech' }, { status: 500 });
