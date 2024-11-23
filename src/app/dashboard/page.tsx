@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import EmptyState from "./_components/EmptyState"
 import { db } from "@/config/db"
 import { VideoData } from "@/config/schema"
@@ -16,37 +16,38 @@ const Dashboard = () => {
   const { user } = useUser()
   const router = useRouter()
 
-  useEffect(() => {
-    const GetVideoList = async () => {
-      setIsLoading(true)
-      try {
-        const result = await db.select().from(VideoData)
-          .where(user?.primaryEmailAddress?.emailAddress
-            ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
-            : undefined)
+  const GetVideoList = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const result = await db.select().from(VideoData)
+        .where(user?.primaryEmailAddress?.emailAddress
+          ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
+          : undefined)
 
-        console.log(result);
-        // Transform data to match the `videoDataSchema` type
-        const formattedResult: videoDataSchema[] = result.map((item) => ({
-          id: item.id,
-          script: Array.isArray(item.script) ? item.script : [],
-          audioFileUrl: item.audioFileUrl || "",
-          captions: Array.isArray(item.captions) ? item.captions : [],
-          imageList: item.imageList || [],
-          createdBy: item.createdBy || "",
-        }));
+      console.log(result);
+      // Transform data to match the `videoDataSchema` type
+      const formattedResult: videoDataSchema[] = result.map((item) => ({
+        id: item.id,
+        script: Array.isArray(item.script) ? item.script : [],
+        audioFileUrl: item.audioFileUrl || "",
+        captions: Array.isArray(item.captions) ? item.captions : [],
+        imageList: item.imageList || [],
+        createdBy: item.createdBy || "",
+      }));
 
-        setVideoList(formattedResult);
-      } catch (error) {
-        console.error("Error fetching video list:", error)
-      } finally {
-        setIsLoading(false)
-      }
+      setVideoList(formattedResult);
+    } catch (error) {
+      console.error("Error fetching video list:", error)
+    } finally {
+      setIsLoading(false)
     }
+  }, [user])
+
+  useEffect(() => {
     if (user) {
       GetVideoList();
     }
-  }, [user]);
+  }, [user, GetVideoList]);
 
   return (
     <div>

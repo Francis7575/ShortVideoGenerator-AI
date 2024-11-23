@@ -17,21 +17,22 @@ const DashboardLayout = ({ children }: Props) => {
   const { setUserDetail } = useUserDetailContext()
   const { user } = useUser()
 
-  useEffect(() => {
-    const GetUserDetail = async () => {
-      let result: userDataSchema[] = []
-      if (user?.primaryEmailAddress?.emailAddress) {
-        result = await db.select().from(Users)
-          .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress))
-      }
-      if (result.length > 0) {
-        setUserDetail(result[0])
-      }
+  const GetUserDetail = async () => {
+    let result: userDataSchema[] = []
+    if (user?.primaryEmailAddress?.emailAddress) {
+      result = await db.select().from(Users)
+        .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress))
     }
+    if (result.length > 0) {
+      setUserDetail(result[0])
+    }
+  }
+
+  useEffect(() => {
     if (user) {
       GetUserDetail()
     }
-  }, [user]) // Only run when user is available
+  }, [user, GetUserDetail])
 
   return (
     <div>

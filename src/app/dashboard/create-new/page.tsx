@@ -1,5 +1,5 @@
 'use client'
-import { MouseEvent, useEffect, useState } from "react"
+import { MouseEvent, useCallback, useEffect, useState } from "react"
 import SelectTopic from "./_components/SelectTopic"
 import SelectStyle from "./_components/SelectStyle"
 import SelectDuration from "./_components/SelectDuration"
@@ -30,7 +30,6 @@ const CreateNew = () => {
   const { userDetail, setUserDetail } = useUserDetailContext()
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
-  console.log(videoScript, audioFileUrl, captions, imageList);
 
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
@@ -78,6 +77,7 @@ const CreateNew = () => {
       }))
       setVideoScript(data.result)
       await GenerateAudioFile(data.result)
+      console.log(videoScript, audioFileUrl, captions, imageList);
     } catch (e) {
       console.error('Failed to fetch video script:', e);
     } finally {
@@ -174,9 +174,23 @@ const CreateNew = () => {
     }
   };
 
+  const UpdateUserCredits = async () => {
+    if (user?.primaryEmailAddress?.emailAddress) {
+      const result = await db.update(Users).set({
+        credits: (userDetail?.credits ?? 0) - 10
+      }).where(eq(Users?.email, user.primaryEmailAddress.emailAddress))
+      console.log(result);
+    }
+    setUserDetail(prev => ({
+      ...prev,
+      "credits": (userDetail?.credits ?? 0) - 10
+    }))
 
-  useEffect(() => {
-    const SaveVideoData = async (videoData: videoParams | videoParams[]) => {
+    setVideoData(null)
+  }
+
+  const SaveVideoData = useCallback(
+    async (videoData: videoParams | videoParams[]) => {
       setLoading(true)
       console.log(videoData);
 
@@ -203,27 +217,16 @@ const CreateNew = () => {
       } finally {
         setLoading(false);
       }
-    }
+    },
+    [user, UpdateUserCredits, db, VideoData] 
+  );
+
+  useEffect(() => {
     if (videoData && Object.keys(videoData).length === 4 && !submitted) {
       SaveVideoData(videoData);
     }
+  }, [videoData, submitted, SaveVideoData]);
 
-  }, [videoData, submitted]);
-
-  const UpdateUserCredits = async () => {
-    if (user?.primaryEmailAddress?.emailAddress) {
-      const result = await db.update(Users).set({
-        credits: (userDetail?.credits ?? 0) - 10
-      }).where(eq(Users?.email, user.primaryEmailAddress.emailAddress))
-      console.log(result);
-    }
-    setUserDetail(prev => ({
-      ...prev,
-      "credits": (userDetail?.credits ?? 0) - 10
-    }))
-
-    setVideoData(null)
-  }
 
   return (
     <div className="lg:px-10">
