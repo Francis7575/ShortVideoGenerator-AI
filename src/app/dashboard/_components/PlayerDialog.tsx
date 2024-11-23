@@ -29,12 +29,6 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    if (playVideo && videoId) {
-      setOpenDialog(!openDialog);
-      GetVideoData();
-    }
-  }, [playVideo, videoId]);
-
   const GetVideoData = async () => {
     const result = await db.select().from(VideoData).where(eq(VideoData.id, videoId));
 
@@ -52,6 +46,12 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
     }
   };
 
+  if (playVideo && videoId) {
+    setOpenDialog((prev) => !prev);
+    GetVideoData();
+  }
+
+}, [playVideo, videoId]);
   // Render dialog only on the client
   if (!openDialog || !videoData) return null;
 

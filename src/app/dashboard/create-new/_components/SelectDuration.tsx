@@ -15,7 +15,9 @@ const SelectDuration = ({ onUserSelect }: SelectProps) => {
         Select the duration of your video
       </p>
       <Select onValueChange={(value) => {
-        value != 'Custom Prompt' && onUserSelect('duration', value)
+        if (value != 'Custom Prompt') {
+          onUserSelect('duration', value);
+        }
       }}>
         <SelectTrigger className="w-full mt-2 p-6 text-lg">
           <SelectValue placeholder="Select Duration" />

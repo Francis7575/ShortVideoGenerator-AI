@@ -28,7 +28,7 @@ const Header = () => {
               rounded-md ${path === item.path && 'bg-primary text-white'}`}>
             <span>
               {typeof item.icon === 'string' ? (
-                <img src={item.icon} alt={item.name} className="w-6 h-6" />
+                <Image src={item.icon} alt={item.name} width={20} height={20} className="w-6 h-6" />
               ) : (
                 <item.icon className="w-6 h-6" />
               )}
