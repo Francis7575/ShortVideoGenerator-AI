@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, useEffect } from "react"
+import { ReactNode, useCallback, useEffect } from "react"
 import Header from "./_components/Header"
 import SideNav from "./_components/SideNav"
 import { useUserDetailContext } from "../_context/UserDetailContext"
@@ -17,16 +17,20 @@ const DashboardLayout = ({ children }: Props) => {
   const { setUserDetail } = useUserDetailContext()
   const { user } = useUser()
 
-  const GetUserDetail = async () => {
-    let result: userDataSchema[] = []
-    if (user?.primaryEmailAddress?.emailAddress) {
-      result = await db.select().from(Users)
-        .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress))
+  const GetUserDetail = useCallback(async () => {
+    try {
+      let result: userDataSchema[] = []
+      if (user?.primaryEmailAddress?.emailAddress) {
+        result = await db.select().from(Users)
+          .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress))
+      }
+      if (result.length > 0) {
+        setUserDetail(result[0])
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error)
     }
-    if (result.length > 0) {
-      setUserDetail(result[0])
-    }
-  }
+  }, [user, setUserDetail])
 
   useEffect(() => {
     if (user) {

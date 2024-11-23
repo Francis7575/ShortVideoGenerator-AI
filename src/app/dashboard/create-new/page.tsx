@@ -218,7 +218,7 @@ const CreateNew = () => {
         setLoading(false);
       }
     },
-    [user, UpdateUserCredits, db, VideoData] 
+    [user, UpdateUserCredits] 
   );
 
   useEffect(() => {

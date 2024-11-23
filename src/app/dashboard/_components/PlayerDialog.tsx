@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Player } from '@remotion/player';
 import RemotionVideo from '@/app/dashboard/_components/RemotionVideo';
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { db } from "@/config/db";
 import { VideoData } from "@/config/schema";
@@ -28,29 +28,33 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
   const [durationInFrame, setDurationInFrame] = useState<number>(100)
   const router = useRouter()
 
+  const GetVideoData = useCallback(async () => {
+    try {
+      const result = await db.select().from(VideoData).where(eq(VideoData.id, videoId));
+
+      if (result[0]) {
+        const formattedData: videoDataSchema = {
+          id: result[0].id,
+          script: result[0].script as VideoScriptItem[],
+          audioFileUrl: result[0].audioFileUrl,
+          captions: result[0].captions as captionsItem[],
+          imageList: result[0].imageList ?? [],
+          createdBy: result[0].createdBy,
+        };
+        console.log(formattedData);
+        setVideoData(formattedData);
+      }
+    } catch (err) {
+      console.log('Error while getting VideoData:', err);
+    }
+  }, [setVideoData])
+
   useEffect(() => {
     if (playVideo && videoId) {
       setOpenDialog(!openDialog);
       GetVideoData();
     }
-  }, [playVideo, videoId]);
-
-  const GetVideoData = async () => {
-    const result = await db.select().from(VideoData).where(eq(VideoData.id, videoId));
-
-    if (result[0]) {
-      const formattedData: videoDataSchema = {
-        id: result[0].id,
-        script: result[0].script as VideoScriptItem[],
-        audioFileUrl: result[0].audioFileUrl,
-        captions: result[0].captions as captionsItem[],
-        imageList: result[0].imageList ?? [],
-        createdBy: result[0].createdBy,
-      };
-      console.log(formattedData);
-      setVideoData(formattedData);
-    }
-  };
+  }, [playVideo, videoId, GetVideoData]);
 
   // Render dialog only on the client
   if (!openDialog || !videoData) return null;
@@ -75,7 +79,7 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
                 }}
               />
               <DialogFooter className='flex gap-10 mt-10 !justify-center'>
-                <Button variant="ghost" onClick={() => {router.replace('/dashboard'); setOpenDialog(false)}}>
+                <Button variant="ghost" onClick={() => { router.replace('/dashboard'); setOpenDialog(false) }}>
                   Close
                 </Button>
               </DialogFooter>
