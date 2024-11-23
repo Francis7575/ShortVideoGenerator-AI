@@ -78,7 +78,6 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
                 <Button variant="ghost" onClick={() => {router.replace('/dashboard'); setOpenDialog(false)}}>
                   Close
                 </Button>
-                <Button>Export</Button>
               </DialogFooter>
             </div>
 

@@ -17,37 +17,36 @@ const Dashboard = () => {
   const router = useRouter()
 
   useEffect(() => {
+    const GetVideoList = async () => {
+      setIsLoading(true)
+      try {
+        const result = await db.select().from(VideoData)
+          .where(user?.primaryEmailAddress?.emailAddress
+            ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
+            : undefined)
+
+        console.log(result);
+        // Transform data to match the `videoDataSchema` type
+        const formattedResult: videoDataSchema[] = result.map((item) => ({
+          id: item.id,
+          script: Array.isArray(item.script) ? item.script : [],
+          audioFileUrl: item.audioFileUrl || "",
+          captions: Array.isArray(item.captions) ? item.captions : [],
+          imageList: item.imageList || [],
+          createdBy: item.createdBy || "",
+        }));
+
+        setVideoList(formattedResult);
+      } catch (error) {
+        console.error("Error fetching video list:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
     if (user) {
       GetVideoList();
     }
   }, [user]);
-
-  const GetVideoList = async () => {
-    setIsLoading(true)
-    try {
-      const result = await db.select().from(VideoData)
-        .where(user?.primaryEmailAddress?.emailAddress
-          ? eq(VideoData.createdBy, user.primaryEmailAddress.emailAddress)
-          : undefined)
-
-      console.log(result);
-      // Transform data to match the `videoDataSchema` type
-      const formattedResult: videoDataSchema[] = result.map((item) => ({
-        id: item.id,
-        script: Array.isArray(item.script) ? item.script : [],
-        audioFileUrl: item.audioFileUrl || "",
-        captions: Array.isArray(item.captions) ? item.captions : [],
-        imageList: item.imageList || [],
-        createdBy: item.createdBy || "",
-      }));
-
-      setVideoList(formattedResult);
-    } catch (error) {
-      console.error("Error fetching video list:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <div>

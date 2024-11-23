@@ -31,7 +31,7 @@ const CreateNew = () => {
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
   console.log(videoScript, audioFileUrl, captions, imageList);
-  
+
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     // console.log(fieldName, fieldValue);
@@ -108,7 +108,9 @@ const CreateNew = () => {
         'audioFileUrl': data.result
       }))
       setAudioFileUrl(data.result)
-      data.result && await GenerateAudioCaption(data.result, videoScriptData)
+      if (data.result) {
+        await GenerateAudioCaption(data.result, videoScriptData)
+      }
     } catch (e) {
       console.error('Error generate audio file:', e)
     } finally {
@@ -133,8 +135,9 @@ const CreateNew = () => {
         'captions': data.result
       }))
       setCaptions(data.result)
-      data.result && await GenerateImage(videoScriptData);
-
+      if (data.result) {
+        await GenerateImage(videoScriptData);
+      }
     } catch (e) {
       console.error('Error generate audio caption:', e)
     } finally {
@@ -147,7 +150,6 @@ const CreateNew = () => {
     setLoading(true)
     try {
       const imageFiles: string[] = [];
-      let index = 0;
 
       for (const item of videoScriptData || []) {
         const response = await fetch("/api/generate-image", {
@@ -172,40 +174,41 @@ const CreateNew = () => {
     }
   };
 
+
   useEffect(() => {
+    const SaveVideoData = async (videoData: videoParams | videoParams[]) => {
+      setLoading(true)
+      console.log(videoData);
+
+      // Ensure videoData is an array
+      const videos = Array.isArray(videoData) ? [videoData[0]] : [videoData];
+      console.log(videos[0]);
+
+      try {
+        const result = await db.insert(VideoData).values({
+          script: videos[0]?.script || [],
+          audioFileUrl: videos[0]?.audioFileUrl || '',
+          captions: videos[0]?.captions || [],
+          imageList: videos[0]?.imageList || [],
+          createdBy: user?.primaryEmailAddress?.emailAddress || '',
+        }).returning({ id: VideoData?.id })
+
+        console.log('Inserted result:', result);
+        setSubmitted(true);
+        await UpdateUserCredits()
+        setVideoId(result[0].id);
+        setPlayVideo(true)
+      } catch (error) {
+        console.error('Error inserting videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
     if (videoData && Object.keys(videoData).length === 4 && !submitted) {
       SaveVideoData(videoData);
     }
+
   }, [videoData, submitted]);
-
-  const SaveVideoData = async (videoData: videoParams | videoParams[]) => {
-    setLoading(true)
-    console.log(videoData);
-
-    // Ensure videoData is an array
-    const videos = Array.isArray(videoData) ? [videoData[0]] : [videoData];
-    console.log(videos[0]);
-
-    try {
-      const result = await db.insert(VideoData).values({
-        script: videos[0]?.script || [],
-        audioFileUrl: videos[0]?.audioFileUrl || '',
-        captions: videos[0]?.captions || [],
-        imageList: videos[0]?.imageList || [],
-        createdBy: user?.primaryEmailAddress?.emailAddress || '',
-      }).returning({ id: VideoData?.id })
-
-      console.log('Inserted result:', result);
-      setSubmitted(true);
-      await UpdateUserCredits()
-      setVideoId(result[0].id);
-      setPlayVideo(true)
-    } catch (error) {
-      console.error('Error inserting videos:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const UpdateUserCredits = async () => {
     if (user?.primaryEmailAddress?.emailAddress) {
