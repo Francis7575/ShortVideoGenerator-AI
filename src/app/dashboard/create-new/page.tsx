@@ -102,6 +102,11 @@ const CreateNew = () => {
         },
         body: JSON.stringify({ text: script, id: id })
       })
+      if (!response.ok) {
+        const errorMessage = await response.text(); // Get the raw error response
+        console.error("Error generating audio file:", errorMessage);
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
       const data = await response.json()
       setVideoData(prev => ({
         ...prev,
