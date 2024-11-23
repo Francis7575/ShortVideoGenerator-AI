@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { AbsoluteFill, Audio, Img, interpolate, Sequence, useCurrentFrame, useVideoConfig } from "remotion"
 
 
-const RemotionVideo = ({ script, imageList, audioFileUrl, captions, setDurationInFrame }: RemotionVideoProps) => {
+const RemotionVideo = ({ imageList, audioFileUrl, captions, setDurationInFrame }: RemotionVideoProps) => {
 
   const { fps } = useVideoConfig()
   const frame = useCurrentFrame();

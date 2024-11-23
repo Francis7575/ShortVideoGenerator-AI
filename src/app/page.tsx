@@ -1,9 +1,6 @@
-'use client'
+'use client';
+import { redirect, RedirectType } from 'next/navigation';
 
 export default function Home() {
-  return (
-    <div>
-      hello world
-    </div>
-  );
+  redirect('/dashboard', RedirectType.replace);
 }

@@ -30,7 +30,8 @@ const CreateNew = () => {
   const { userDetail, setUserDetail } = useUserDetailContext()
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
-
+  console.log(videoScript, audioFileUrl, captions, imageList);
+  
 
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     // console.log(fieldName, fieldValue);

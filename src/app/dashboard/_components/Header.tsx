@@ -1,8 +1,7 @@
 'use client'
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { UserButton } from "@clerk/nextjs";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useUserDetailContext } from "@/app/_context/UserDetailContext";
 import { Menu } from 'lucide-react'
 import { useState } from "react";
@@ -13,11 +12,6 @@ const Header = () => {
   const { userDetail } = useUserDetailContext()
   const [isMenuOpened, setisMenuOpened] = useState<boolean>(false)
   const path = usePathname()
-  const router = useRouter()
-
-  const handleNav = () => {
-    router.push('/dashboard')
-  }
 
   const HandleToggleMenu = () => {
     setisMenuOpened(!isMenuOpened)
@@ -53,7 +47,6 @@ const Header = () => {
       <div className="flex gap-3 items-center">
         <Image src={'/star.png'} height={20} width={20} alt="" />
         <h2>{userDetail?.credits}</h2>
-        <Button onClick={handleNav}>Dashboard</Button>
         <UserButton />
       </div>
       {isMenuOpened && (

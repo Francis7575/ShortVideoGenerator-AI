@@ -19,12 +19,12 @@ const BuyCreditsPage = () => {
   const { userDetail, setUserDetail } = useUserDetailContext()
 
   const creditsOption = [
-    { credits: 5, amount: 0.99 },
-    { credits: 10, amount: 1.99 },
-    { credits: 25, amount: 3.99 },
+    { credits: 10, amount: 2.99 },
+    { credits: 20, amount: 5.99 },
+    { credits: 30, amount: 7.99 },
     { credits: 50, amount: 6.99 },
     { credits: 100, amount: 9.99 }
-  ]
+  ];
 
   const onPaymentSuccess = async () => {
     console.log("Payment Success");

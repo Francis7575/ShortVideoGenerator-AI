@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect } from "react"
 import Header from "./_components/Header"
 import SideNav from "./_components/SideNav"
 import { useUserDetailContext } from "../_context/UserDetailContext"
@@ -14,7 +14,7 @@ type Props = {
 }
 
 const DashboardLayout = ({ children }: Props) => {
-  const { userDetail, setUserDetail } = useUserDetailContext()
+  const { setUserDetail } = useUserDetailContext()
   const { user } = useUser()
 
   useEffect(() => {
