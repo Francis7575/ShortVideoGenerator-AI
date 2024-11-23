@@ -51,7 +51,7 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
 
   useEffect(() => {
     if (playVideo && videoId) {
-      setOpenDialog(!openDialog);
+      setOpenDialog(prev => !prev);
       GetVideoData();
     }
   }, [playVideo, videoId, GetVideoData]);

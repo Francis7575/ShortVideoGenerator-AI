@@ -187,7 +187,7 @@ const CreateNew = () => {
     }))
 
     setVideoData(null)
-  }, [user?.primaryEmailAddress?.emailAddress, userDetail?.credits, setUserDetail])
+  }, [user?.primaryEmailAddress?.emailAddress, userDetail?.credits, setUserDetail, setVideoData])
 
   const SaveVideoData = useCallback(
     async (videoData: videoParams | videoParams[]) => {
