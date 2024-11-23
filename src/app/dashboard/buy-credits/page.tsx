@@ -21,9 +21,9 @@ const BuyCreditsPage = () => {
   const creditsOption = [
     { credits: 10, amount: 2.99 },
     { credits: 20, amount: 5.99 },
-    { credits: 30, amount: 7.99 },
-    { credits: 50, amount: 6.99 },
-    { credits: 100, amount: 9.99 }
+    { credits: 30, amount: 8.99 },
+    { credits: 50, amount: 11.99 },
+    { credits: 100, amount: 20.99 }
   ];
 
   const onPaymentSuccess = async () => {
