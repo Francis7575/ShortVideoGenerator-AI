@@ -47,7 +47,7 @@ const PlayerDialog = ({ playVideo, videoId }: PlayerDialogProps) => {
     } catch (err) {
       console.log('Error while getting VideoData:', err);
     }
-  }, [setVideoData])
+  }, [setVideoData, videoId])
 
   useEffect(() => {
     if (playVideo && videoId) {

@@ -174,7 +174,7 @@ const CreateNew = () => {
     }
   };
 
-  const UpdateUserCredits = async () => {
+  const UpdateUserCredits = useCallback(async () => {
     if (user?.primaryEmailAddress?.emailAddress) {
       const result = await db.update(Users).set({
         credits: (userDetail?.credits ?? 0) - 10
@@ -187,7 +187,7 @@ const CreateNew = () => {
     }))
 
     setVideoData(null)
-  }
+  }, [user?.primaryEmailAddress?.emailAddress, userDetail?.credits, setUserDetail])
 
   const SaveVideoData = useCallback(
     async (videoData: videoParams | videoParams[]) => {
