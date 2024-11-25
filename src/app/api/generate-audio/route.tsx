@@ -23,14 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (response.audioContent) {
       const storageRef = ref(storage, 'ai-short-video-files/' + id + '.mp3')
-      await uploadBytes(storageRef, Buffer.from(response.audioContent),
-        {
-          contentType: 'audio/mp3',
-        }).then(() => {
-          console.log("File uploaded successfully");
-        }).catch((err) => {
-          console.error("Error uploading file:", err);
-        });
+      await uploadBytes(storageRef, Buffer.from(response.audioContent), { contentType: 'audio/mp3' })
       const downloadUrl = await getDownloadURL(storageRef)
       return NextResponse.json({ result: downloadUrl })
     } else {
