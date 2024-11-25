@@ -31,7 +31,6 @@ const CreateNew = () => {
   const { videoData, setVideoData } = useVideoDataContext()
   const { user } = useUser();
 
-
   const handleInputChange = (fieldName: string, fieldValue: string) => {
     // console.log(fieldName, fieldValue);
 
@@ -204,11 +203,15 @@ const CreateNew = () => {
       console.log(videos[0]);
 
       try {
+        const flattenedImageList: string[] = Array.isArray(videos[0]?.imageList)
+          ? videos[0]?.imageList.flat() // Flatten nested arrays
+          : [];
+
         const result = await db.insert(VideoData).values({
           script: videos[0]?.script || [],
           audioFileUrl: videos[0]?.audioFileUrl || '',
           captions: videos[0]?.captions || [],
-          imageList: videos[0]?.imageList || [],
+          imageList: flattenedImageList,
           createdBy: user?.primaryEmailAddress?.emailAddress || '',
         }).returning({ id: VideoData?.id })
 
@@ -223,7 +226,7 @@ const CreateNew = () => {
         setLoading(false);
       }
     },
-    [user, UpdateUserCredits] 
+    [user, UpdateUserCredits]
   );
 
   useEffect(() => {
