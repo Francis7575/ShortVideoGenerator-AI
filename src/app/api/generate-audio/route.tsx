@@ -29,19 +29,11 @@ export async function POST(req: NextRequest) {
       audioConfig: { audioEncoding: protos.google.cloud.texttospeech.v1.AudioEncoding.MP3 },
     };
 
-    const [response] = await withTimeout(client.synthesizeSpeech(request), 4000); // 8-second timeout
+    const [response] = await withTimeout(client.synthesizeSpeech(request), 8000); // 8-second timeout
 
     if (response.audioContent) {
-      const storageRef = ref(storage, 'ai-short-video-files/' + id + '.mp3');
-
       // Add timeout to file upload
-      await withTimeout(
-        uploadBytes(storageRef, Buffer.from(response.audioContent), { contentType: 'audio/mp3' }),
-        3000 // 7-second timeout
-      );
-
-      // Add timeout to getDownloadURL
-      const downloadUrl = await withTimeout(getDownloadURL(storageRef), 3000); // 5-second timeout
+      const downloadUrl = await uploadAndRetrieveURL(Buffer.from(response.audioContent), id);
 
       return NextResponse.json({ result: downloadUrl });
     } else {
@@ -62,3 +54,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }
+
+const uploadAndRetrieveURL = async (audioContent: Buffer, id: string) => {
+  const storageRef = ref(storage, `ai-short-video-files/${id}.mp3`);
+
+  // Upload and get URL in parallel
+  const uploadPromise = uploadBytes(storageRef, audioContent, { contentType: 'audio/mp3' });
+  const uploadResult = await withTimeout(uploadPromise, 7000);
+
+  const urlPromise = getDownloadURL(storageRef);
+  const downloadUrl = await withTimeout(urlPromise, 5000);
+
+  return downloadUrl;
+};
