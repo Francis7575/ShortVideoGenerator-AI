@@ -264,7 +264,7 @@ const CreateNew = () => {
     if (videoData) {
       console.log(videoScript, audioFileUrl, captions, imageList);
     }
-  }, [videoData]);
+  }, [videoData, videoScript, audioFileUrl, captions, imageList]);
 
   return (
     <div className="lg:px-10">

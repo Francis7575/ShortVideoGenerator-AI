@@ -70,7 +70,7 @@ const Dashboard = () => {
     } catch (err) {
       console.error(err);
     }
-  }, [user]);
+  }, [user, setUserDetail]);
 
   useEffect(() => {
     if (user) {
