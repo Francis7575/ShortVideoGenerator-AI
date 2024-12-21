@@ -50,6 +50,5 @@ export type userDataSchema = {
   name?: string 
   email?: string
   imageUrl?: string | null
-  subscription?: boolean| null
   credits?: number | null
 }

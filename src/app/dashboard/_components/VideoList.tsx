@@ -18,7 +18,7 @@ const VideoList = ({ videoList }: VideoListProps) => {
   };
 
   return (
-    <div className="mt-10 flex flex-wrap justify-evenly gap-10">
+    <div className="mt-10 flex flex-wrap justify-around gap-10">
       {videoList.map((video, idx) => (
         <div key={idx} className="cursor-pointer hover:scale-105 transition-all"
           onClick={() => handleClick(video?.id)}>

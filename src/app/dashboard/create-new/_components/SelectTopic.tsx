@@ -23,7 +23,7 @@ const SelectTopic = ({ onUserSelect }: SelectProps) => {
       <Select onValueChange={(value) => {
         setSelectedOption(value)
         if (value != 'Custom Prompt') {
-          onUserSelect('duration', value);
+          onUserSelect('topic', value);
         }
       }}>
         <SelectTrigger className="w-full mt-2 p-6 text-lg">

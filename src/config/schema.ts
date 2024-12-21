@@ -5,7 +5,6 @@ export const Users = pgTable('users', {
   name: varchar('name').notNull(),
   email: varchar('email').notNull(),
   imageUrl: varchar('imageUrl'),
-  subscription: boolean('subscription').default(false),
   credits: integer('credits').default(30)
 })
 
